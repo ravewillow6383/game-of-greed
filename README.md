@@ -17,7 +17,5 @@ I built this application using python3
 I'm not using an API for this application. 
 
 ## Change Log
-<!-- Use this are to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example:
-
-01-01-2001 4:59pm - Added functionality to add and delete some things.
+10:00 - features all working but a little buggy. Can't get dict to hold onto infor for longer that one roll of dice? Check with JB ot James tomorrow
 -->
