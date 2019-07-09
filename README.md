@@ -11,7 +11,7 @@ Application should keep track of total score and it should keep track of current
 I'll be writing this code in python in a pipenv. 
 
 ## Architecture
-<!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. This is also an area which you can include any visuals; flow charts, example usage gifs, screen captures, etc.-->
+I built this application using python3
 
 ## API
 I'm not using an API for this application. 
