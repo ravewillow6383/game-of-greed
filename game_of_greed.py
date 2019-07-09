@@ -29,13 +29,14 @@ instructions = """
 *******************************************************************
 """
 
-
 ROLL_OR_BANK_PROMPT = """
 *************************************
 **       Play at least one die     **
 **  to roll again, or bank points  **
 **           please type:          **
-** 'b' to bank  or 'r' roll again  **
+** 'b' to bank  or 'r' to choose   **
+**      the dice to keep and       **
+**         roll again              **
 *************************************
 """
 
@@ -74,6 +75,7 @@ dice_keeper_numbers = {
 print(welcome, instructions)
 total_points = 0
 round = 1
+keepers_two = []
 
 def roll_or_bank(list):
     for num in keepers: 
@@ -91,12 +93,15 @@ def roll_the_dice():
     print(random_dice)
 
 def reroll(list):
-    n = 6 -len(keepers)
+    n = 6 -len(keepers_two)
     random_dice=[random.randint(1, 6) for _ in range(n)]
     print(random_dice)
 
 def bank_it(total_points, round):
+    score = int(input(UPDATE_SCORE_PROMPT))
+    round_scores.append(score)
     total_points += sum(round_scores)
+    keepers_two.clear()
     round += 1
     print(f'**You have banked your {total_points}. Round {round - 1} is now over. Time for round {round}!')
 
@@ -116,8 +121,10 @@ while True:
     if keep_or_bank == 'r':
         keeper_response = input(dice_keepers_prompt)
         keepers = list(keeper_response)
+        keepers_two.append(keepers)
 
         roll_or_bank(keepers)
+        # breakpoint()
         roll_again = input(SECOND_ROLL_PROMPT)
     if keep_or_bank == 'b':
         bank_it(total_points, round)
