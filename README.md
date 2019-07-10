@@ -17,5 +17,8 @@ I built this application using python3
 I'm not using an API for this application. 
 
 ## Change Log
-10:00 - features all working but a little buggy. Can't get dict to hold onto infor for longer that one roll of dice? Check with JB ot James tomorrow
+10:00pm - features all working but a little buggy. Can't get dict to hold onto infor for longer that one roll of dice? Check with JB ot James tomorrow  7/8/19
+11:44pm - worked out most bugs. Trying to build a tally score function to over write user input for score. I built a test for the function. I'm able to get the user input into the function and stored in a dictionary, but the actual tally isn't working and I just need to sleep. 
+
+
 -->
