@@ -48,6 +48,16 @@ dice_keepers_prompt = """
 *************************************
 """
 
+reroll_dice_keepers_prompt = """
+*************************************
+**    Please type which numbers    **
+**  from the dice that you would   **
+**    like to keep or type 'b'     **
+**   to bank your points and end   **
+**        your turn:               **
+*************************************
+"""
+
 SECOND_ROLL_PROMPT = """
 *************************************
 **    Press 'y' to roll your       **
@@ -77,11 +87,11 @@ total_points = 0
 round = 1
 keepers_two = []
 
-def roll_or_bank(list):
+def roll_or_bank():
     for num in keepers: 
         dice_keeper_numbers[num] += 1
 
-    print(f'**You now have {dice_keeper_numbers[num]} dice that you are keeping. **')
+    print(f'**You now have {len(keepers)} dice that you are keeping. **')
 
     score = int(input(UPDATE_SCORE_PROMPT))
     round_scores.append(score)
@@ -92,19 +102,22 @@ def roll_the_dice():
     random_dice=[random.randint(1, 6) for _ in range(6)]
     print(random_dice)
 
-def reroll(list):
-    n = 6 -len(keepers_two)
+def reroll():
+    n = 6 -len(keepers)
     random_dice=[random.randint(1, 6) for _ in range(n)]
     print(random_dice)
+    for num in keepers: 
+        dice_keeper_numbers[num] += 1
 
-def bank_it(total_points, round):
+def bank_it():
+    global total_points
+    global round
     score = int(input(UPDATE_SCORE_PROMPT))
     round_scores.append(score)
     total_points += sum(round_scores)
     keepers_two.clear()
     round += 1
-    print(f'**You have banked your {total_points}. Round {round - 1} is now over. Time for round {round}!')
-
+    print(f'**You have banked your {total_points}. Round {round - 1} is now over. Time for round {round}!')  
 
 while True:
     import random
@@ -123,24 +136,31 @@ while True:
         keepers = list(keeper_response)
         keepers_two.append(keepers)
 
-        roll_or_bank(keepers)
+        roll_or_bank()
         # breakpoint()
         roll_again = input(SECOND_ROLL_PROMPT)
     if keep_or_bank == 'b':
-        bank_it(total_points, round)
+        bank_it()
     
     if roll_again == 'y':
-        reroll(keepers)
+        reroll()
+        reroll_keeper_response = input(reroll_dice_keepers_prompt)
+        keepers = list(keeper_response)
+        keepers_two.extend(keepers)
+
+        roll_or_bank()
         second_keep = input(ROLL_OR_BANK_PROMPT)
-        roll_or_bank(keepers)
     if roll_again != 'y':
-        prompt = 'please enter "y" to roll or "quit" to exit the game.'
+       bank_it()
+
+    if reroll_keeper_response == 'b' or second_keep == 'b':
+        bank_it()
 
     if second_keep == 'y':
-        reroll(keepers)
+        reroll()
+        reroll_keeper_response = input(reroll_dice_keepers_prompt)
+        keepers_reroll = list(keeper_response)
+        keepers_two.extend(keepers_reroll)
+        roll_or_bank()
         second_keep = input(SECOND_ROLL_PROMPT)
-        roll_or_bank(keepers)
-    if second_keep == 'b':
-        bank_it(total_points, round)
-
-    
+ 
