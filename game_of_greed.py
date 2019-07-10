@@ -94,15 +94,15 @@ def tally_score(inpt):
     for die in inpt:
         counts[die] = counts.get(die, 0) + 1
         print('!!!!!!!!!!!!!!!!', die, counts[die])
-        if die == 1:
+        if die == '1':
             if counts[die] == 1: score +=  100
             if counts[die] == 6: score += 2200
             if counts[die] == 5: score += 2100
             if counts[die] == 4: score += 2000
             if counts[die] == 3: score += 1000
-            if counts[die] in [1, 2]: score += (counts * 100)
+            if counts[die] in [1, 2]: score += (1 * 100)
         if die == 5:
-            if counts[die] == 1: score +=  50
+            if counts[die] in [1, 2]: score += (counts[die] * 50)
         else:
             print('not yet')
             # if counts >= 4: score += (die * 200)
