@@ -87,6 +87,34 @@ total_points = 0
 round = 1
 keepers_two = []
 
+def tally_score(inpt):
+    counts = {}
+    score = 0
+    # for i in range(inpt):
+    for die in inpt:
+        counts[die] = counts.get(die, 0) + 1
+        print('!!!!!!!!!!!!!!!!', die, counts[die])
+        if die == 1:
+            if counts[die] == 1: score +=  100
+            if counts[die] == 6: score += 2200
+            if counts[die] == 5: score += 2100
+            if counts[die] == 4: score += 2000
+            if counts[die] == 3: score += 1000
+            if counts[die] in [1, 2]: score += (counts * 100)
+        if die == 5:
+            if counts[die] == 1: score +=  50
+        else:
+            print('not yet')
+            # if counts >= 4: score += (die * 200)
+            # if counts >= 3: score += (die * 100)
+            # if (die == '5' and count != 3): score += (count * 50)
+    print(f'your score is {score}')
+    return score
+
+keeper_response = input(dice_keepers_prompt)
+
+tally_score(keeper_response)
+
 def roll_or_bank():
     for num in keepers: 
         dice_keeper_numbers[num] += 1
