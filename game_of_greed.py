@@ -87,7 +87,7 @@ total_points = 0
 round = 1
 keepers_two = []
 
-def tally_score(inpt):
+def tally_score(inpt, method):
     counts = {}
     score = 0
     pair_counter = 0
@@ -133,12 +133,23 @@ def tally_score(inpt):
     if len(counts) == 6: 
       score = 0
       score += 1500
+    a = score
+    method(a)
     print(f'your score is {score}')
     return score
+    
 
-# keeper_response = input(dice_keepers_prompt)
+def print_score(val):
+    val
+    output = print_score(val)
+    file = open('house_rules.txt','w')
+    file.write(output)
+    file.close()
 
-# tally_score(keeper_response)
+
+keeper_response = input(dice_keepers_prompt)
+
+tally_score(keeper_response, print_score)
 
 def roll_or_bank():
     for num in keepers: 
