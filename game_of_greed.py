@@ -87,33 +87,69 @@ total_points = 0
 round = 1
 keepers_two = []
 
-def tally_score(inpt):
+def tally_score(inpt, method):
     counts = {}
     score = 0
-    # for i in range(inpt):
+    pair_counter = 0
+  
     for die in inpt:
         counts[die] = counts.get(die, 0) + 1
         print('!!!!!!!!!!!!!!!!', die, counts[die])
-        if die == '1':
-            if counts[die] == 1: score +=  100
-            if counts[die] == 6: score += 2200
-            if counts[die] == 5: score += 2100
-            if counts[die] == 4: score += 2000
-            if counts[die] == 3: score += 1000
-            if counts[die] in [1, 2]: score += (1 * 100)
-        if die == 5:
-            if counts[die] in [1, 2]: score += (counts[die] * 50)
-        else:
-            print('not yet')
-            # if counts >= 4: score += (die * 200)
-            # if counts >= 3: score += (die * 100)
-            # if (die == '5' and count != 3): score += (count * 50)
+        if counts[die] == 2: pair_counter += 1
+        if pair_counter < 3 and len(counts) < 6:
+            if die == '1':
+                if counts[die] == 6: score += 2200
+                if counts[die] == 5: score += 2100
+                if counts[die] == 4: score += 2000
+                if counts[die] == 3: score += 1000
+                if counts[die] in [1, 2]: score += (1 * 100)
+            if die == '5':
+                if counts[die] in [1, 2]: score += 50
+            if die == '2':
+                if counts[die] == 3: score += 200
+                if counts[die] == 4: score += 400
+                if counts[die] == 5: score += 600
+                if counts[die] == 6: score += 800
+            if die == '3':
+                if counts[die] == 3: score += 300
+                if counts[die] == 4: score += 600
+                if counts[die] == 5: score += 900
+                if counts[die] == 6: score += 1200
+            if die == '4':
+                if counts[die] == 3: score += 400
+                if counts[die] == 4: score += 800
+                if counts[die] == 5: score += 1200
+                if counts[die] == 6: score += 1600
+            if die == '6':
+                if counts[die] == 3: score += 600
+                if counts[die] == 4: score += 1200
+                if counts[die] == 5: score += 1800
+                if counts[die] == 6: score += 2400
+
+    if pair_counter == 3:
+        score = 0
+        score += 1000
+        print(score)
+    if len(counts) == 6: 
+      score = 0
+      score += 1500
+    a = score
+    method(a)
     print(f'your score is {score}')
     return score
+    
+
+def print_score(val):
+    val
+    output = print_score(val)
+    file = open('house_rules.txt','w')
+    file.write(output)
+    file.close()
+
 
 keeper_response = input(dice_keepers_prompt)
 
-tally_score(keeper_response)
+tally_score(keeper_response, print_score)
 
 def roll_or_bank():
     for num in keepers: 
