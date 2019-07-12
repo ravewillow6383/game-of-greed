@@ -73,28 +73,29 @@ UPDATE_SCORE_PROMPT = """
 """
 
 
-dice_keeper_numbers = {
-    '1' : 0,
-    '2' : 0,
-    '3' : 0,
-    '4' : 0,
-    '5' : 0,
-    '6' : 0,
-}
+# dice_keeper_numbers = {
+#     '1' : 0,
+#     '2' : 0,
+#     '3' : 0,
+#     '4' : 0,
+#     '5' : 0,
+#     '6' : 0,
+# }
 
 print(welcome, instructions)
 total_points = 0
+grand_score = 0
 round = 1
 keepers_two = []
 
 def tally_score(inpt):
+    global grand_score
     counts = {}
     score = 0
     pair_counter = 0
   
     for die in inpt:
         counts[die] = counts.get(die, 0) + 1
-        # print('!!!!!!!!!!!!!!!!', die, counts[die])
         if counts[die] == 2: pair_counter += 1
         if pair_counter < 3 and len(counts) < 6:
             if die == '1':
@@ -132,37 +133,69 @@ def tally_score(inpt):
 
     if pair_counter == 3:
         score = 0
-        score += 1000
+        score += default_score['THREE_PAIR_SCORE']
         print(score)
     if len(counts) == 6: 
       score = 0
-      score += 1500
-    # print(f'your score is {score}')
+      score += default_score['STRAIGHT_SCORE']
+    print(f'your score is {score}')
+    grand_score += score
     return score
-    
-
-# def print_score(val):
-#     val
-#     output = print_score(val)
-#     file = open('house_rules.txt','w')
-#     file.write(output)
-#     file.close()
 
 
-# keeper_response = input(dice_keepers_prompt)
 
-# tally_score(keeper_response)
+def getNewRules():
+  contents = ''
+  alternate_score = {}
+
+  with open('house_rules.txt') as file:
+    contents = file.read()
+
+  contents = contents.split("\n")
+
+  for rule in contents:
+    new_rule = rule.split(":")
+    alternate_score[new_rule[0]] = new_rule[1]
+    # breakpoint()
+  return alternate_score
+# getNewRules()
+default_score = {
+
+    'STRAIGHT_SCORE':1500,
+    'THREE_PAIR_SCORE':1000,
+}
+# def print_score():
+        
+#     with open(path) as file:
+#     path = 
+
+#     contents += ' - has been read'
+
+#     with open('output.txt', 'w') as outputfile:
+#         outputfile.write(contents)
+
+#     print('write complete')       
+def keep_or_bank():
+    keep_or_bank = input(ROLL_OR_BANK_PROMPT)
+    return keep_or_bank
+
 
 def roll_or_bank():
-    for num in keepers: 
-        dice_keeper_numbers[num] += 1
+    # for num in keepers: 
+    #     dice_keeper_numbers[num] += 1
+    if len(keepers) == 6:
+        print("You get 6 dice back! Great work.")
+        keepers.clear()
+        roll_the_dice()
+        roll_or_bank()
 
     print(f'**You now have {len(keepers)} dice that you are keeping. **')
 
-    score = int(input(UPDATE_SCORE_PROMPT))
-    round_scores.append(score)
 
-    print(f'**Your total score so far is {sum(round_scores)}')
+    # score = int(input(UPDATE_SCORE_PROMPT))
+    # round_scores.append(score)
+
+    print(f'**Your total score so far is {grand_score}')
 
 def roll_the_dice():
     random_dice=[random.randint(1, 6) for _ in range(6)]
@@ -172,62 +205,68 @@ def reroll():
     n = 6 -len(keepers)
     random_dice=[random.randint(1, 6) for _ in range(n)]
     print(random_dice)
-    for num in keepers: 
-        dice_keeper_numbers[num] += 1
 
 def bank_it():
     global total_points
     global round
-    score = int(input(UPDATE_SCORE_PROMPT))
-    round_scores.append(score)
+    # score = int(input(UPDATE_SCORE_PROMPT))
     total_points += sum(round_scores)
     keepers_two.clear()
     round += 1
-    print(f'**You have banked your {total_points}. Round {round - 1} is now over. Time for round {round}!')  
+    print(f'**You have banked your {grand_score}. Round {round - 1} is now over. Time for round {round}!')  
+    reroll()
 
+def game_over():
+    print(f'You have finished your third and final round! Your grand score was {grand_score}' )
 
 if __name__ == "__main__":
     while True:
         round_scores = []
         game_prompt = input(game_prompt)
 
-        if game_prompt == 'quit':
+        if game_prompt == 'quit' or game_prompt == 'q':
             break
-
-        if game_prompt == 'y':
+        if game_prompt == 'y' or game_prompt == 'Y':
             roll_the_dice()
             keep_or_bank = input(ROLL_OR_BANK_PROMPT)
 
-        if keep_or_bank == 'r':
+        if keep_or_bank == 'r' or keep_or_bank == 'R' or keep_or_bank == 'y' or keep_or_bank == 'Y':
             keeper_response = input(dice_keepers_prompt)
+            tally_score(keeper_response)
             keepers = list(keeper_response)
             keepers_two.append(keepers)
 
             roll_or_bank()
-            # breakpoint()
             roll_again = input(SECOND_ROLL_PROMPT)
-        if keep_or_bank == 'b':
+        if keep_or_bank == 'b' or keep_or_bank == 'B':
             bank_it()
         
-        if roll_again == 'y':
+        if roll_again == 'y' or roll_again == 'Y':
             reroll()
             reroll_keeper_response = input(reroll_dice_keepers_prompt)
+            tally_score(reroll_keeper_response)
             keepers = list(keeper_response)
             keepers_two.extend(keepers)
 
             roll_or_bank()
             second_keep = input(ROLL_OR_BANK_PROMPT)
-        if roll_again != 'y':
+        if roll_again != 'y' or roll_again != 'Y':
             bank_it()
 
         if reroll_keeper_response == 'b' or second_keep == 'b':
             bank_it()
+            game_prompt = input(game_prompt)
 
-        if second_keep == 'y':
+
+        if second_keep == 'y' or second_keep =='Y':
             reroll()
             reroll_keeper_response = input(reroll_dice_keepers_prompt)
+            tally_score(reroll_keeper_response)
             keepers_reroll = list(keeper_response)
             keepers_two.extend(keepers_reroll)
             roll_or_bank()
             second_keep = input(SECOND_ROLL_PROMPT)
+
+        if round == 4:
+            game_over()
  
