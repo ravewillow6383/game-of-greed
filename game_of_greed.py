@@ -1,3 +1,4 @@
+from rules import Rules, Alternate
 import random
 
 welcome = """
@@ -103,9 +104,9 @@ def tally_score(inpt):
                 if counts[die] == 5: score += 1000
                 if counts[die] == 4: score += 1000
                 if counts[die] == 3: score += 800
-                if counts[die] in [1, 2]: score += 100
+                if counts[die] in [1, 2]: score += default_score['ONE_ONE_SCORE']
             if die == '5':
-                if counts[die] in [1, 2]: score += 50
+                if counts[die] in [1, 2]: score += default_score['ONE_FIVE_SCORE']
                 if counts[die] == 3: score += 400
                 if counts[die] == 4: score += 500
                 if counts[die] == 5: score += 500
@@ -143,7 +144,7 @@ def tally_score(inpt):
     return score
 
 
-
+# NEW RULES
 def getNewRules():
   contents = ''
   alternate_score = {}
@@ -158,11 +159,19 @@ def getNewRules():
     alternate_score[new_rule[0]] = new_rule[1]
     # breakpoint()
   return alternate_score
-# getNewRules()
-default_score = {
 
-    'STRAIGHT_SCORE':1500,
-    'THREE_PAIR_SCORE':1000,
+
+default_score = Rules()
+new_score = Alternate()
+# getNewRules()
+
+# DEFAULT WIKI RULES
+
+default_score = {
+    'ONE_ONE_SCORE':default_score.ONE_ONE_SCORE,
+    'ONE_FIVE_SCORE':default_score.ONE_FIVE_SCORE,
+    'STRAIGHT_SCORE':default_score.STRAIGHT_SCORE,
+    'THREE_PAIR_SCORE':default_score.THREE_PAIR_SCORE,
 }
 # def print_score():
         

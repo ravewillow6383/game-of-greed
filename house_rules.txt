@@ -1,2 +1,11 @@
 STRAIGHT_SCORE:2500
 THREE_PAIR_SCORE:2000
+ONE_ONE_SCORE:100
+ONE_FIVE_SCORE:50
+
+
+'Rules' object is not subscriptable
+    self.ONE_ONE_SCORE = 100
+    self.ONE_FIVE_SCORE = 50
+    self.STRAIGHT_SCORE = 1500
+    self.THREE_PAIR_SCORE = 1000
