@@ -87,44 +87,48 @@ total_points = 0
 round = 1
 keepers_two = []
 
-def tally_score(inpt, method):
+def tally_score(inpt):
     counts = {}
     score = 0
     pair_counter = 0
   
     for die in inpt:
         counts[die] = counts.get(die, 0) + 1
-        print('!!!!!!!!!!!!!!!!', die, counts[die])
+        # print('!!!!!!!!!!!!!!!!', die, counts[die])
         if counts[die] == 2: pair_counter += 1
         if pair_counter < 3 and len(counts) < 6:
             if die == '1':
-                if counts[die] == 6: score += 2200
-                if counts[die] == 5: score += 2100
-                if counts[die] == 4: score += 2000
-                if counts[die] == 3: score += 1000
-                if counts[die] in [1, 2]: score += (1 * 100)
+                if counts[die] == 6: score += 1000
+                if counts[die] == 5: score += 1000
+                if counts[die] == 4: score += 1000
+                if counts[die] == 3: score += 800
+                if counts[die] in [1, 2]: score += 100
             if die == '5':
                 if counts[die] in [1, 2]: score += 50
+                if counts[die] == 3: score += 400
+                if counts[die] == 4: score += 500
+                if counts[die] == 5: score += 500
+                if counts[die] == 6: score += 500
             if die == '2':
                 if counts[die] == 3: score += 200
-                if counts[die] == 4: score += 400
-                if counts[die] == 5: score += 600
-                if counts[die] == 6: score += 800
+                if counts[die] == 4: score += 200
+                if counts[die] == 5: score += 200
+                if counts[die] == 6: score += 200
             if die == '3':
                 if counts[die] == 3: score += 300
-                if counts[die] == 4: score += 600
-                if counts[die] == 5: score += 900
-                if counts[die] == 6: score += 1200
+                if counts[die] == 4: score += 300
+                if counts[die] == 5: score += 300
+                if counts[die] == 6: score += 300
             if die == '4':
                 if counts[die] == 3: score += 400
-                if counts[die] == 4: score += 800
-                if counts[die] == 5: score += 1200
-                if counts[die] == 6: score += 1600
+                if counts[die] == 4: score += 400
+                if counts[die] == 5: score += 400
+                if counts[die] == 6: score += 400
             if die == '6':
                 if counts[die] == 3: score += 600
-                if counts[die] == 4: score += 1200
-                if counts[die] == 5: score += 1800
-                if counts[die] == 6: score += 2400
+                if counts[die] == 4: score += 600
+                if counts[die] == 5: score += 600
+                if counts[die] == 6: score += 600
 
     if pair_counter == 3:
         score = 0
@@ -133,23 +137,21 @@ def tally_score(inpt, method):
     if len(counts) == 6: 
       score = 0
       score += 1500
-    a = score
-    method(a)
-    print(f'your score is {score}')
+    # print(f'your score is {score}')
     return score
     
 
-def print_score(val):
-    val
-    output = print_score(val)
-    file = open('house_rules.txt','w')
-    file.write(output)
-    file.close()
+# def print_score(val):
+#     val
+#     output = print_score(val)
+#     file = open('house_rules.txt','w')
+#     file.write(output)
+#     file.close()
 
 
-keeper_response = input(dice_keepers_prompt)
+# keeper_response = input(dice_keepers_prompt)
 
-tally_score(keeper_response, print_score)
+# tally_score(keeper_response)
 
 def roll_or_bank():
     for num in keepers: 
@@ -183,48 +185,49 @@ def bank_it():
     round += 1
     print(f'**You have banked your {total_points}. Round {round - 1} is now over. Time for round {round}!')  
 
-while True:
-    import random
-    round_scores = []
-    game_prompt = input(game_prompt)
 
-    if game_prompt == 'quit':
-        break
+if __name__ == "__main__":
+    while True:
+        round_scores = []
+        game_prompt = input(game_prompt)
 
-    if game_prompt == 'y':
-        roll_the_dice()
-        keep_or_bank = input(ROLL_OR_BANK_PROMPT)
+        if game_prompt == 'quit':
+            break
 
-    if keep_or_bank == 'r':
-        keeper_response = input(dice_keepers_prompt)
-        keepers = list(keeper_response)
-        keepers_two.append(keepers)
+        if game_prompt == 'y':
+            roll_the_dice()
+            keep_or_bank = input(ROLL_OR_BANK_PROMPT)
 
-        roll_or_bank()
-        # breakpoint()
-        roll_again = input(SECOND_ROLL_PROMPT)
-    if keep_or_bank == 'b':
-        bank_it()
-    
-    if roll_again == 'y':
-        reroll()
-        reroll_keeper_response = input(reroll_dice_keepers_prompt)
-        keepers = list(keeper_response)
-        keepers_two.extend(keepers)
+        if keep_or_bank == 'r':
+            keeper_response = input(dice_keepers_prompt)
+            keepers = list(keeper_response)
+            keepers_two.append(keepers)
 
-        roll_or_bank()
-        second_keep = input(ROLL_OR_BANK_PROMPT)
-    if roll_again != 'y':
-       bank_it()
+            roll_or_bank()
+            # breakpoint()
+            roll_again = input(SECOND_ROLL_PROMPT)
+        if keep_or_bank == 'b':
+            bank_it()
+        
+        if roll_again == 'y':
+            reroll()
+            reroll_keeper_response = input(reroll_dice_keepers_prompt)
+            keepers = list(keeper_response)
+            keepers_two.extend(keepers)
 
-    if reroll_keeper_response == 'b' or second_keep == 'b':
-        bank_it()
+            roll_or_bank()
+            second_keep = input(ROLL_OR_BANK_PROMPT)
+        if roll_again != 'y':
+            bank_it()
 
-    if second_keep == 'y':
-        reroll()
-        reroll_keeper_response = input(reroll_dice_keepers_prompt)
-        keepers_reroll = list(keeper_response)
-        keepers_two.extend(keepers_reroll)
-        roll_or_bank()
-        second_keep = input(SECOND_ROLL_PROMPT)
+        if reroll_keeper_response == 'b' or second_keep == 'b':
+            bank_it()
+
+        if second_keep == 'y':
+            reroll()
+            reroll_keeper_response = input(reroll_dice_keepers_prompt)
+            keepers_reroll = list(keeper_response)
+            keepers_two.extend(keepers_reroll)
+            roll_or_bank()
+            second_keep = input(SECOND_ROLL_PROMPT)
  
