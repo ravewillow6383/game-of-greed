@@ -1,53 +1,78 @@
 from rules import Rules, Alternate
 import random
+def start_game():
 
-welcome = """
-**************************************
-**       Try your luck at foo!      **
-**    Roll the dice and track your  **
-**             points               **
-** To quit at any time, type "quit" **
-**************************************
-"""
+    rule_prompt =  """
+    **************************************
+    **       Try your luck at foo!      **
+    **    Roll the dice and track your  **
+    **             points               **
+    ** To quit at any time, type "quit" **
+    **************************************
+    #####################################################
 
-game_prompt = """
-***********************************
-**      Ready to roll? Y/N       **
-***********************************
-"""
-instructions = """
-*******************************************************************
-** Roll all six dice at the same time and remove at least one    **
-** "point dice," meaning any dice that are worth points, that    **
-** you want to keep. You can then either roll the remaining dice **
-** or bank your points. If you get points from all 6 dice then   **
-** you may roll all six again until you either lose or you bank. **
-**                                                               **
-**                     -POINTS-                                  **
-**        A roll of a 1 is worth 100 points.                     **
-**        A roll of a 5 is worth 50 points.                      **
-**        Three of a kind is worth 100 times the face value.     **
-*******************************************************************
-"""
+    Would you like to play with a custom rules set? Y/N
+   
+    #####################################################
+   """
 
-ROLL_OR_BANK_PROMPT = """
-*************************************
-**       Play at least one die     **
-**  to roll again, or bank points  **
-**           please type:          **
-** 'b' to bank  or 'r' to choose   **
-**      the dice to keep and       **
-**         roll again              **
-*************************************
-"""
+   
+    if input(rule_prompt).lower() == 'y' or input(rule_prompt).lower() == 'yes':
+        custom_rules()
+    else:
+        default_rules()
 
-dice_keepers_prompt = """
-*************************************
-**    Please type which numbers    **
-**  from the dice that you would   **
-**           like to keep:         **
-*************************************
-"""
+def ready_to_roll():
+
+    game_prompt = """
+    ***********************************
+    **      Ready to roll? Y/N       **
+    ***********************************
+    """
+
+    if input(game_prompt).lower() == 'y' or input(game_prompt).lower == 'yes':
+        let_em_roll()
+    else: 
+        print('type \'q\' at anytime to quit')
+        start_game()
+
+def let_em_roll():
+    
+    roll_the_dice()
+
+    roll_or_bank = ROLL_OR_BANK_PROMPT = """
+    ***************************************
+    If you want to roll again you need to
+    play at least one die. Are there any
+    die here that you would like to credit
+    towards your score? Type Y/N        
+    ***************************************
+    """
+    if input(roll_or_bank).lower == 'y' or 'yes':
+        which_to_keep  = """
+        *************************************
+        **    Please type which numbers    **
+        **  from the dice that you would   **
+        **           like to keep:         **
+        *************************************
+        """
+        SECOND_ROLL_PROMPT = """
+        *************************************
+        **    Press 'y' to roll your       **
+        **       remaining dice or         **
+        ** 'N' to bank your points and     **
+        **       end your turn             **
+        *************************************
+        """
+    if input(roll_or_bank).lower == 'n' or 'no':
+        bank_it()
+    
+    if input(SECOND_ROLL_PROMPT).lower == 'y' or input(SECOND_ROLL_PROMPT).lower == 'yes':
+        reroll()
+    if input(SECOND_ROLL_PROMPT).lower == 'n' or input(SECOND_ROLL_PROMPT).lower == 'no':
+        bank_it()
+
+
 
 reroll_dice_keepers_prompt = """
 *************************************
@@ -59,12 +84,7 @@ reroll_dice_keepers_prompt = """
 *************************************
 """
 
-SECOND_ROLL_PROMPT = """
-*************************************
-**    Press 'y' to roll your       **
-**       remaining dice.           **
-*************************************
-"""
+
 
 UPDATE_SCORE_PROMPT = """
 *************************************
@@ -142,7 +162,6 @@ def tally_score(inpt):
     print(f'your score is {score}')
     grand_score += score
     return score
-
 
 # NEW RULES
 def getNewRules():
