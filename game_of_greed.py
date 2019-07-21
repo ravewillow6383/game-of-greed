@@ -1,5 +1,6 @@
 from rules import Rules, Alternate
 import random
+import sys
 keepers = []
 grand_score = 0
 total_points = int(0)
@@ -34,11 +35,12 @@ def getNewRules():
   return alternate_score
 
 def start_game():
-
+  try:
     rule_prompt =  """
     **************************************
     **       Try your luck at foo!      **
     **    Roll the dice and track your  **
+    **        type 'q' to quit          **
     **             points               **
     **************************************
     #####################################################
@@ -46,8 +48,7 @@ def start_game():
     Would you like to play with a custom rules set? Y/N
    
     #####################################################
-   """
-   
+   """ 
     rule_prompt = input(rule_prompt) 
     if rule_prompt.lower() == 'n' or rule_prompt.lower == 'no':
       roll_the_dice()
@@ -56,9 +57,14 @@ def start_game():
       roll_the_dice()
       getNewRules()
       let_em_roll_alternate()
+    if rule_prompt.lower() == 'q' or rule_prompt.lower == 'quit':
+      sys.exit(0)
     else:
       print('please type Y/N')
       start_game()
+  except KeyboardInterrupt:
+    print('Do you really want to quit? Press q if so.')
+    start_game()
 
 default_score = Rules()
 default_score = {
@@ -69,7 +75,7 @@ default_score = {
 }
 
 def let_em_roll():
-
+  try:
     ROLL_OR_BANK_PROMPT = """
     ***************************************
     If you want to roll again you need to
@@ -102,13 +108,19 @@ def let_em_roll():
           let_em_roll()
        
     if roll_or_bank.lower() == 'n' or roll_or_bank.lower() == 'no':
-        bank_it()
+      bank_it()
+    if roll_or_bank.lower() == 'q' or roll_or_bank.lower() == 'quit':
+      sys.exit(0)
+
     else:
       print('uh oh! Are you alright? Please type y/n next time.')
       let_em_roll()
+  except KeyboardInterrupt:
+    print('do you really want to quit?')
+    let_em_roll()
 
 def let_em_roll_alternate():
-
+  try:
     ROLL_OR_BANK_PROMPT = """
     ***************************************
     If you want to roll again you need to
@@ -141,9 +153,14 @@ def let_em_roll_alternate():
           let_em_roll()    
     if roll_or_bank.lower() == 'n' or roll_or_bank.lower() == 'no':
         bank_it()
+    if roll_or_bank.lower() == 'q' or roll_or_bank.lower() == 'quit':
+       sys.exit(0)
     else:
       print('uh oh! Are you alright? Please type y/n next time.')
       let_em_roll_alternate()
+  except KeyboardInterrupt:
+    print('do you really want to quit? If so, press q')
+    let_em_roll_alternate()
 
 def tally_score(inpt):
     global grand_score
@@ -262,7 +279,7 @@ def tally_score_alternate(inpt):
     return score
 
 def bank_it():
-  while True:
+  try:
     global total_points
     global round
     global grand_score
@@ -285,6 +302,9 @@ def bank_it():
         start_game()
       if again.lower() == 'n' or again.lower() == 'no':
         print('thanks for playing.')
+        sys.exit(0)
+  except KeyboardInterrupt:
+    print('Do you really want to quit? Press q if so.')
+    bank_it()
 
-while True:  
-  start_game()
+start_game()
