@@ -1,166 +1,10 @@
+from rules import Rules, Alternate
 import random
-
-welcome = """
-**************************************
-**       Try your luck at foo!      **
-**    Roll the dice and track your  **
-**             points               **
-** To quit at any time, type "quit" **
-**************************************
-"""
-
-game_prompt = """
-***********************************
-**      Ready to roll? Y/N       **
-***********************************
-"""
-instructions = """
-*******************************************************************
-** Roll all six dice at the same time and remove at least one    **
-** "point dice," meaning any dice that are worth points, that    **
-** you want to keep. You can then either roll the remaining dice **
-** or bank your points. If you get points from all 6 dice then   **
-** you may roll all six again until you either lose or you bank. **
-**                                                               **
-**                     -POINTS-                                  **
-**        A roll of a 1 is worth 100 points.                     **
-**        A roll of a 5 is worth 50 points.                      **
-**        Three of a kind is worth 100 times the face value.     **
-*******************************************************************
-"""
-
-ROLL_OR_BANK_PROMPT = """
-*************************************
-**       Play at least one die     **
-**  to roll again, or bank points  **
-**           please type:          **
-** 'b' to bank  or 'r' to choose   **
-**      the dice to keep and       **
-**         roll again              **
-*************************************
-"""
-
-dice_keepers_prompt = """
-*************************************
-**    Please type which numbers    **
-**  from the dice that you would   **
-**           like to keep:         **
-*************************************
-"""
-
-reroll_dice_keepers_prompt = """
-*************************************
-**    Please type which numbers    **
-**  from the dice that you would   **
-**    like to keep or type 'b'     **
-**   to bank your points and end   **
-**        your turn:               **
-*************************************
-"""
-
-SECOND_ROLL_PROMPT = """
-*************************************
-**    Press 'y' to roll your       **
-**       remaining dice.           **
-*************************************
-"""
-
-UPDATE_SCORE_PROMPT = """
-*************************************
-**    Please tally your score      **
-**      and input the total:       **
-*************************************
-"""
-
-
-dice_keeper_numbers = {
-    '1' : 0,
-    '2' : 0,
-    '3' : 0,
-    '4' : 0,
-    '5' : 0,
-    '6' : 0,
-}
-
-print(welcome, instructions)
-total_points = 0
+import sys
+keepers = []
+grand_score = 0
+total_points = int(0)
 round = 1
-keepers_two = []
-
-def tally_score(inpt, method):
-    counts = {}
-    score = 0
-    pair_counter = 0
-  
-    for die in inpt:
-        counts[die] = counts.get(die, 0) + 1
-        print('!!!!!!!!!!!!!!!!', die, counts[die])
-        if counts[die] == 2: pair_counter += 1
-        if pair_counter < 3 and len(counts) < 6:
-            if die == '1':
-                if counts[die] == 6: score += 2200
-                if counts[die] == 5: score += 2100
-                if counts[die] == 4: score += 2000
-                if counts[die] == 3: score += 1000
-                if counts[die] in [1, 2]: score += (1 * 100)
-            if die == '5':
-                if counts[die] in [1, 2]: score += 50
-            if die == '2':
-                if counts[die] == 3: score += 200
-                if counts[die] == 4: score += 400
-                if counts[die] == 5: score += 600
-                if counts[die] == 6: score += 800
-            if die == '3':
-                if counts[die] == 3: score += 300
-                if counts[die] == 4: score += 600
-                if counts[die] == 5: score += 900
-                if counts[die] == 6: score += 1200
-            if die == '4':
-                if counts[die] == 3: score += 400
-                if counts[die] == 4: score += 800
-                if counts[die] == 5: score += 1200
-                if counts[die] == 6: score += 1600
-            if die == '6':
-                if counts[die] == 3: score += 600
-                if counts[die] == 4: score += 1200
-                if counts[die] == 5: score += 1800
-                if counts[die] == 6: score += 2400
-
-    if pair_counter == 3:
-        score = 0
-        score += 1000
-        print(score)
-    if len(counts) == 6: 
-      score = 0
-      score += 1500
-    a = score
-    method(a)
-    print(f'your score is {score}')
-    return score
-    
-
-def print_score(val):
-    val
-    output = print_score(val)
-    file = open('house_rules.txt','w')
-    file.write(output)
-    file.close()
-
-
-keeper_response = input(dice_keepers_prompt)
-
-tally_score(keeper_response, print_score)
-
-def roll_or_bank():
-    for num in keepers: 
-        dice_keeper_numbers[num] += 1
-
-    print(f'**You now have {len(keepers)} dice that you are keeping. **')
-
-    score = int(input(UPDATE_SCORE_PROMPT))
-    round_scores.append(score)
-
-    print(f'**Your total score so far is {sum(round_scores)}')
 
 def roll_the_dice():
     random_dice=[random.randint(1, 6) for _ in range(6)]
@@ -170,61 +14,297 @@ def reroll():
     n = 6 -len(keepers)
     random_dice=[random.randint(1, 6) for _ in range(n)]
     print(random_dice)
-    for num in keepers: 
-        dice_keeper_numbers[num] += 1
+
+def print_score():
+  with open('score.txt', 'w') as file:
+      file.write(f'Your final score was: {total_points}')
+  print('You can find your score saved in score.txt')
+
+def getNewRules():
+  contents = ''
+  alternate_score = {}
+
+  with open('house_rules.txt') as file:
+    contents = file.read()
+
+  contents = contents.split("\n")
+
+  for rule in contents:
+    new_rule = rule.split(":")
+    alternate_score[new_rule[0]] = new_rule[1]
+  return alternate_score
+
+def start_game():
+  try:
+    rule_prompt =  """
+    **************************************
+    **       Try your luck at foo!      **
+    **    Roll the dice and track your  **
+    **        type 'q' to quit          **
+    **             points               **
+    **************************************
+    #####################################################
+
+    Would you like to play with a custom rules set? Y/N
+   
+    #####################################################
+   """ 
+    rule_prompt = input(rule_prompt) 
+    if rule_prompt.lower() == 'n' or rule_prompt.lower == 'no':
+      roll_the_dice()
+      let_em_roll()
+    if rule_prompt.lower() == 'y' or rule_prompt.lower == 'yes':
+      roll_the_dice()
+      getNewRules()
+      let_em_roll_alternate()
+    if rule_prompt.lower() == 'q' or rule_prompt.lower == 'quit':
+      sys.exit(0)
+    else:
+      print('please type Y/N')
+      start_game()
+  except KeyboardInterrupt:
+    print('Do you really want to quit? Press q if so.')
+    start_game()
+
+default_score = Rules()
+default_score = {
+    'ONE_ONE_SCORE':default_score.ONE_ONE_SCORE,
+    'ONE_FIVE_SCORE':default_score.ONE_FIVE_SCORE,
+    'STRAIGHT_SCORE':default_score.STRAIGHT_SCORE,
+    'THREE_PAIR_SCORE':default_score.THREE_PAIR_SCORE,
+}
+
+def let_em_roll():
+  try:
+    ROLL_OR_BANK_PROMPT = """
+    ***************************************
+    If you want to roll again you need to
+    play at least one die. Are there any
+    die here that you would like to credit
+    towards your score? Type Y/N        
+    ***************************************
+    """
+    roll_or_bank = input(ROLL_OR_BANK_PROMPT)
+    if roll_or_bank.lower() == 'y' or roll_or_bank.lower() == 'yes':
+      which_to_keep  = """
+      *************************************
+      **    Please type which numbers    **
+      **  from the dice that you would   **
+      **           like to keep:         **
+      *************************************
+      """
+      keepers_response_one = input(which_to_keep)
+      keepers_response = list(keepers_response_one)
+      keepers.extend(keepers_response) 
+      tally_score(keepers_response_one)
+
+      if len(keepers) == 6:
+          print("You get 6 dice back! Great work.")
+          keepers.clear()
+          roll_the_dice()
+          let_em_roll()
+      if len(keepers) < 6:
+          reroll()
+          let_em_roll()
+       
+    if roll_or_bank.lower() == 'n' or roll_or_bank.lower() == 'no':
+      bank_it()
+    if roll_or_bank.lower() == 'q' or roll_or_bank.lower() == 'quit':
+      sys.exit(0)
+
+    else:
+      print('uh oh! Are you alright? Please type y/n next time.')
+      let_em_roll()
+  except KeyboardInterrupt:
+    print('do you really want to quit?')
+    let_em_roll()
+
+def let_em_roll_alternate():
+  try:
+    ROLL_OR_BANK_PROMPT = """
+    ***************************************
+    If you want to roll again you need to
+    play at least one die. Are there any
+    die here that you would like to credit
+    towards your score? Type Y/N        
+    ***************************************
+    """
+    roll_or_bank = input(ROLL_OR_BANK_PROMPT) 
+    if roll_or_bank.lower() == 'y' or roll_or_bank.lower() == 'yes':
+      which_to_keep  = """
+      *************************************
+      **    Please type which numbers    **
+      **  from the dice that you would   **
+      **           like to keep:         **
+      *************************************
+      """
+      keepers_response_one = input(which_to_keep)
+      keepers_response = list(keepers_response_one)
+      keepers.extend(keepers_response) 
+      tally_score_alternate(keepers_response_one)
+
+      if len(keepers) == 6:
+          print("You get 6 dice back! Great work.")
+          keepers.clear()
+          roll_the_dice()
+          let_em_roll()
+      if len(keepers) < 6:
+          reroll()
+          let_em_roll()    
+    if roll_or_bank.lower() == 'n' or roll_or_bank.lower() == 'no':
+        bank_it()
+    if roll_or_bank.lower() == 'q' or roll_or_bank.lower() == 'quit':
+       sys.exit(0)
+    else:
+      print('uh oh! Are you alright? Please type y/n next time.')
+      let_em_roll_alternate()
+  except KeyboardInterrupt:
+    print('do you really want to quit? If so, press q')
+    let_em_roll_alternate()
+
+def tally_score(inpt):
+    global grand_score
+    counts = {}
+    score = 0
+    pair_counter = 0
+  
+    for die in inpt:
+        counts[die] = counts.get(die, 0) + 1
+        if counts[die] == 2: pair_counter += 1
+        if pair_counter < 3 and len(counts) < 6:
+            if die == '1':
+                if counts[die] == 6: score += 1000
+                if counts[die] == 5: score += 1000
+                if counts[die] == 4: score += 1000
+                if counts[die] == 3: score += 800
+                if counts[die] in [1, 2]: score += default_score['ONE_ONE_SCORE']
+            if die == '5':
+                if counts[die] in [1, 2]: score += default_score['ONE_FIVE_SCORE']
+                if counts[die] == 3: score += 400
+                if counts[die] == 4: score += 500
+                if counts[die] == 5: score += 500
+                if counts[die] == 6: score += 500
+            if die == '2':
+                if counts[die] == 3: score += 200
+                if counts[die] == 4: score += 200
+                if counts[die] == 5: score += 200
+                if counts[die] == 6: score += 200
+            if die == '3':
+                if counts[die] == 3: score += 300
+                if counts[die] == 4: score += 300
+                if counts[die] == 5: score += 300
+                if counts[die] == 6: score += 300
+            if die == '4':
+                if counts[die] == 3: score += 400
+                if counts[die] == 4: score += 400
+                if counts[die] == 5: score += 400
+                if counts[die] == 6: score += 400
+            if die == '6':
+                if counts[die] == 3: score += 600
+                if counts[die] == 4: score += 600
+                if counts[die] == 5: score += 600
+                if counts[die] == 6: score += 600
+
+    if pair_counter == 3:
+        score = 0
+        score += default_score['THREE_PAIR_SCORE']
+        print(score)
+    if len(counts) == 6: 
+      score = 0
+      score += default_score['STRAIGHT_SCORE']
+    # breakpoint()
+    print(f'your score for this batch is {score}')
+    grand_score += score
+    return score
+
+alternate_score = Alternate()
+alternate_score = {
+    'STRAIGHT_SCORE':alternate_score.STRAIGHT_SCORE,
+    'THREE_PAIR_SCORE':alternate_score.THREE_PAIR_SCORE,
+}
+
+def tally_score_alternate(inpt):
+    global grand_score
+    counts = {}
+    score = 0
+    pair_counter = 0
+  
+    for die in inpt:
+        counts[die] = counts.get(die, 0) + 1
+        if counts[die] == 2: pair_counter += 1
+        if pair_counter < 3 and len(counts) < 6:
+            if die == '1':
+                if counts[die] == 6: score += 1000
+                if counts[die] == 5: score += 1000
+                if counts[die] == 4: score += 1000
+                if counts[die] == 3: score += 800
+                if counts[die] in [1, 2]: score += default_score['ONE_ONE_SCORE']
+            if die == '5':
+                if counts[die] in [1, 2]: score += default_score['ONE_FIVE_SCORE']
+                if counts[die] == 3: score += 400
+                if counts[die] == 4: score += 500
+                if counts[die] == 5: score += 500
+                if counts[die] == 6: score += 500
+            if die == '2':
+                if counts[die] == 3: score += 200
+                if counts[die] == 4: score += 200
+                if counts[die] == 5: score += 200
+                if counts[die] == 6: score += 200
+            if die == '3':
+                if counts[die] == 3: score += 300
+                if counts[die] == 4: score += 300
+                if counts[die] == 5: score += 300
+                if counts[die] == 6: score += 300
+            if die == '4':
+                if counts[die] == 3: score += 400
+                if counts[die] == 4: score += 400
+                if counts[die] == 5: score += 400
+                if counts[die] == 6: score += 400
+            if die == '6':
+                if counts[die] == 3: score += 600
+                if counts[die] == 4: score += 600
+                if counts[die] == 5: score += 600
+                if counts[die] == 6: score += 600
+
+    if pair_counter == 3:
+        score = 0
+        score += alternate_score['THREE_PAIR_SCORE']
+        print(score)
+    if len(counts) == 6: 
+      score = 0
+      score += alternate_score['STRAIGHT_SCORE']
+    # breakpoint()
+    print(f'your score for this batch is {score}')
+    grand_score += score
+    return score
 
 def bank_it():
+  try:
     global total_points
     global round
-    score = int(input(UPDATE_SCORE_PROMPT))
-    round_scores.append(score)
-    total_points += sum(round_scores)
-    keepers_two.clear()
+    global grand_score
+    # score = int(input(UPDATE_SCORE_PROMPT))
+    total_points += grand_score
+    keepers.clear()
+    # breakpoint()
     round += 1
-    print(f'**You have banked your {total_points}. Round {round - 1} is now over. Time for round {round}!')  
+    if round <= 3:
+      print(f'You have banked your {total_points}. Round {round - 1} is now over. Time for round {round}!')  
+      roll_the_dice()
+      let_em_roll()
+    if round > 3:
+      print(f'Congrats! You ended round three with a total score of {total_points}.')
+      print_score()
+      again_prompt = 'Would you like to play again?'
+      again = input(again_prompt)
+      if again.lower() == 'y' or again.lower() == 'yes':
+        grand_score = 0
+        start_game()
+      if again.lower() == 'n' or again.lower() == 'no':
+        print('thanks for playing.')
+        sys.exit(0)
+  except KeyboardInterrupt:
+    print('Do you really want to quit? Press q if so.')
+    bank_it()
 
-while True:
-    import random
-    round_scores = []
-    game_prompt = input(game_prompt)
-
-    if game_prompt == 'quit':
-        break
-
-    if game_prompt == 'y':
-        roll_the_dice()
-        keep_or_bank = input(ROLL_OR_BANK_PROMPT)
-
-    if keep_or_bank == 'r':
-        keeper_response = input(dice_keepers_prompt)
-        keepers = list(keeper_response)
-        keepers_two.append(keepers)
-
-        roll_or_bank()
-        # breakpoint()
-        roll_again = input(SECOND_ROLL_PROMPT)
-    if keep_or_bank == 'b':
-        bank_it()
-    
-    if roll_again == 'y':
-        reroll()
-        reroll_keeper_response = input(reroll_dice_keepers_prompt)
-        keepers = list(keeper_response)
-        keepers_two.extend(keepers)
-
-        roll_or_bank()
-        second_keep = input(ROLL_OR_BANK_PROMPT)
-    if roll_again != 'y':
-       bank_it()
-
-    if reroll_keeper_response == 'b' or second_keep == 'b':
-        bank_it()
-
-    if second_keep == 'y':
-        reroll()
-        reroll_keeper_response = input(reroll_dice_keepers_prompt)
-        keepers_reroll = list(keeper_response)
-        keepers_two.extend(keepers_reroll)
-        roll_or_bank()
-        second_keep = input(SECOND_ROLL_PROMPT)
- 
+start_game()
